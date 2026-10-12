@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: smartshop-postgres
+    environment:
+      POSTGRES_USER: smartshop
+      POSTGRES_PASSWORD: smartshop
+      POSTGRES_DB: smartshop_orders
+    ports:
+      - "5432:5432"
+    volumes:
+      - smartshop-pgdata:/var/lib/postgresql/data
+
+volumes:
+  smartshop-pgdata:
