@@ -19,16 +19,18 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> create(@Valid @RequestBody CreateOrderRequest request) {
+    public ResponseEntity<CreateOrderResponse> create(@Valid @RequestBody CreateOrderRequest request) {
         Order order = new Order();
         order.setCustomerId(request.customerId());
         order.setTotalAmount(request.totalAmount());
         order.setStatus(OrderStatus.PLACED);
 
         Order saved = orderRepository.save(order);
+        // Read it again so we get the bill code the database made.
+        Order stored = orderRepository.findById(saved.getId()).orElseThrow();
         return ResponseEntity
-                .created(URI.create("/orders/" + saved.getId()))
-                .body(saved);
+                .created(URI.create("/orders/" + stored.getId()))
+                .body(CreateOrderResponse.from(stored));
     }
 
     @GetMapping("/{id}")

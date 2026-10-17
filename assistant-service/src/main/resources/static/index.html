@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avantika Provisions - Support Chat</title>
+<style>
+  :root {
+    --bg: #f4f6f8; --card: #ffffff; --text: #1f2933; --muted: #6b7280;
+    --brand: #2e7d32; --brand-text: #ffffff; --bot: #e8f0e9; --border: #d9dee3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161a; --card: #1c2228; --text: #e6e9ec; --muted: #9aa4ae;
+      --brand: #43a047; --brand-text: #ffffff; --bot: #26302a; --border: #2f3841;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg); color: var(--text);
+    display: flex; justify-content: center;
+  }
+  .chat {
+    width: 100%; max-width: 640px; height: 100%;
+    display: flex; flex-direction: column; background: var(--card);
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+  }
+  header { background: var(--brand); color: var(--brand-text); padding: 14px 18px; }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 2px 0 0; font-size: 13px; opacity: .9; }
+  header p.hours { margin-top: 6px; font-size: 12px; opacity: .85; }
+  #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; line-height: 1.45;
+         white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+  .msg.user { align-self: flex-end; background: var(--brand); color: var(--brand-text); border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 4px; }
+  .msg.bot a { color: inherit; text-decoration: underline; }
+  .msg.error { background: #fdecea; color: #8a1c1c; }
+  .typing { color: var(--muted); font-style: italic; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 8px; }
+  .chip { border: 1px solid var(--border); background: var(--card); color: var(--text);
+          border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+  .chip:hover { border-color: var(--brand); }
+
+  /* Contact us */
+  .contact-bar { padding: 0 16px 8px; }
+  .contact-toggle { border: 1px solid var(--brand); background: var(--card); color: var(--brand);
+                    border-radius: 999px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+  .contact-toggle:hover, .contact-toggle[aria-expanded="true"] { background: var(--brand); color: var(--brand-text); }
+  .contact-panel { margin-top: 8px; padding: 12px 14px; border: 1px solid var(--border);
+                   border-radius: 12px; background: var(--bg); font-size: 14px; line-height: 1.5; }
+  .contact-panel[hidden] { display: none; }
+  .contact-panel h2 { margin: 0 0 6px; font-size: 14px; }
+  .contact-panel p { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .contact-links a { display: inline-block; padding: 7px 14px; border-radius: 999px; font-size: 14px;
+                     text-decoration: none; border: 1px solid var(--brand); color: var(--brand); background: var(--card); }
+  .contact-links a:hover { background: var(--brand); color: var(--brand-text); }
+
+  form { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); }
+  input[type=text] { flex: 1; padding: 11px 14px; font-size: 15px; border-radius: 999px;
+                     border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
+  input[type=text]:focus { border-color: var(--brand); }
+  button.send { padding: 0 20px; border: 0; border-radius: 999px; background: var(--brand);
+                color: var(--brand-text); font-size: 15px; cursor: pointer; }
+  button.send:disabled { opacity: .5; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<div class="chat">
+  <header>
+    <h1>Avantika Provisions</h1>
+    <p>Ask about shipping, returns, payments, our shop, or your order</p>
+    <p class="hours">Open Monday to Saturday 9 AM to 6 PM, Sunday 9 AM to 3 PM</p>
+  </header>
+
+  <div id="messages"></div>
+
+  <div class="chips" id="chips">
+    <button class="chip" type="button">Where is your shop?</button>
+    <button class="chip" type="button">What is your return policy?</button>
+    <button class="chip" type="button">Do you accept cash on delivery?</button>
+    <button class="chip" type="button">What are your shipping charges?</button>
+  </div>
+
+  <div class="contact-bar">
+    <button class="contact-toggle" id="contactToggle" type="button"
+            aria-expanded="false" aria-controls="contactPanel">Contact us</button>
+    <div class="contact-panel" id="contactPanel" hidden>
+      <h2>Talk to our team</h2>
+      <p>Monday to Saturday 9 AM to 6 PM, Sunday 9 AM to 3 PM</p>
+      <div class="contact-links">
+        <a href="tel:+910000000000">Call +91-0000000000</a>
+        <a href="https://wa.me/910000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="mailto:support@example.com">Email us</a>
+      </div>
+    </div>
+  </div>
+
+  <form id="form" autocomplete="off">
+    <input type="text" id="input" placeholder="Type your question..." maxlength="500" autofocus>
+    <button class="send" id="send" type="submit">Send</button>
+  </form>
+</div>
+
+<script>
+  const messages = document.getElementById('messages');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+  const chips = document.getElementById('chips');
+  const contactToggle = document.getElementById('contactToggle');
+  const contactPanel = document.getElementById('contactPanel');
+
+  // One random ID per page load, so the server can connect follow-up messages.
+  const sessionId = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : String(Date.now()) + Math.random().toString(16).slice(2);
+
+  // Builds the text safely (no innerHTML) and turns web links into clickable links.
+  function fill(el, text) {
+    el.textContent = '';
+    text.split(/(https?:\/\/[^\s]+)/g).forEach(part => {
+      if (/^https?:\/\//.test(part)) {
+        const trailing = part.match(/[.,;:)]+$/);
+        const url = trailing ? part.slice(0, -trailing[0].length) : part;
+        const a = document.createElement('a');
+        a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = url;
+        el.appendChild(a);
+        if (trailing) el.appendChild(document.createTextNode(trailing[0]));
+      } else {
+        el.appendChild(document.createTextNode(part));
+      }
+    });
+  }
+
+  function addMessage(text, kind) {
+    const el = document.createElement('div');
+    el.className = 'msg ' + kind;
+    fill(el, text);
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+
+  async function ask(text) {
+    addMessage(text, 'user');
+    chips.style.display = 'none';
+    sendBtn.disabled = true;
+    const waiting = addMessage('Typing...', 'bot typing');
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, sessionId: sessionId })
+      });
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+      const data = await res.json();
+      waiting.className = 'msg bot';
+      fill(waiting, data.reply);
+    } catch (err) {
+      waiting.className = 'msg bot error';
+      fill(waiting, 'Sorry, something went wrong. Please try again. (' + err.message + ')');
+    } finally {
+      sendBtn.disabled = false;
+      messages.scrollTop = messages.scrollHeight;
+      input.focus();
+    }
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text || sendBtn.disabled) return;
+    input.value = '';
+    ask(text);
+  });
+
+  chips.addEventListener('click', e => {
+    if (e.target.classList.contains('chip') && !sendBtn.disabled) ask(e.target.textContent);
+  });
+
+  contactToggle.addEventListener('click', () => {
+    const open = contactPanel.hidden;
+    contactPanel.hidden = !open;
+    contactToggle.setAttribute('aria-expanded', String(open));
+    if (open) messages.scrollTop = messages.scrollHeight;
+  });
+
+  addMessage('Hello! Welcome to Avantika Provisions. How can I help you today?', 'bot');
+</script>
+</body>
+</html>

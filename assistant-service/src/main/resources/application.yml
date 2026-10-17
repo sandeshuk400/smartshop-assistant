@@ -4,13 +4,35 @@ server:
 spring:
   application:
     name: assistant-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/smartshop
+    username: smartshop
+    password: ${DB_PASSWORD}
+
   ai:
     ollama:
       base-url: http://localhost:11434
       chat:
         options:
           model: llama3.2:3b
-          temperature: 0.3
+          temperature: 0.0
+      embedding:
+        options:
+          model: nomic-embed-text
+
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 768
+
+orders:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smartshop_orders
+    username: smartshop
+    password: ${DB_PASSWORD}
 
 management:
   endpoints:

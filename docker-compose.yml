@@ -4,12 +4,31 @@ services:
     container_name: smartshop-postgres
     environment:
       POSTGRES_USER: smartshop
-      POSTGRES_PASSWORD: smartshop
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: smartshop_orders
     ports:
       - "5432:5432"
     volumes:
       - smartshop-pgdata:/var/lib/postgresql/data
 
+  smartshop-db:
+    image: pgvector/pgvector:pg16
+    container_name: smartshop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: smartshop
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: smartshop
+    ports:
+      - "5433:5432"
+    volumes:
+      - smartshop-vector-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartshop -d smartshop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   smartshop-pgdata:
+  smartshop-vector-data:

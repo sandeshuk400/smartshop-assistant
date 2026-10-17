@@ -18,7 +18,7 @@
     <description>Inventory service for SmartShop Assistant</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
 
     <dependencies>

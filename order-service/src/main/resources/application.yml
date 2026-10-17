@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/smartshop_orders
     username: smartshop
-    password: smartshop
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
