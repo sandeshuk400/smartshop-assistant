@@ -1,5 +1,7 @@
 # SmartShop Assistant
 
+![Tests](https://github.com/sandeshuk400/smartshop-assistant/actions/workflows/tests.yml/badge.svg)
+
 ![SmartShop chat](docs/chat.png)
 
 A small microservices project for an online grocery shop, with an AI support chat that answers customer questions from the shop's FAQ and can look up order information.
