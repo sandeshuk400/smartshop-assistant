@@ -1,5 +1,7 @@
 # SmartShop Assistant
 
+![SmartShop chat](docs/chat.png)
+
 A small microservices project for an online grocery shop, with an AI support chat that answers customer questions from the shop's FAQ and can look up order information.
 
 > **Demo data:** the address, phone number and email in this repository are placeholders.
