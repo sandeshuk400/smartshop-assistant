@@ -26,10 +26,45 @@ A small microservices project for an online grocery shop, with an AI support cha
 
 PostgreSQL runs in Docker, defined in `docker-compose.yml`.
 
+## How it works
+
+### Chat flow
+
+When a customer sends a message, `ChatController` checks the simple cases in code first and only asks the AI model when it needs to:
+
+```mermaid
+flowchart TD
+    A["Customer asks a question"] --> B["POST /chat"]
+    B --> C{"Return policy question?"}
+    C -- yes --> R1["Fixed reply"]
+    C -- no --> D{"Order question?"}
+    D -- yes --> R2["Order lookup through OrderRepository"]
+    D -- no --> E{"Shipping or payment question?"}
+    E -- yes --> R3["Fixed reply"]
+    E -- no --> F["Search the FAQ in the vector store"]
+    F --> G{"Match found?"}
+    G -- no --> R4["Fallback reply"]
+    G -- yes --> H["Ask llama3.2:3b using only the FAQ text"]
+    H --> R5["Answer"]
+```
+
+### FAQ ingestion
+
+On startup, `FaqIngestion` reads `faq.txt`, turns it into embeddings with `nomic-embed-text`, and stores them in the PostgreSQL `vector_store` table. When a question reaches the model, the closest FAQ text is added to the prompt, and the model is told to answer only from that text and never to guess.
+
+### Design choices
+
+- **Rules before the model:** return, order, shipping and payment questions get fixed or database-backed answers, so they are fast and cannot be made up by the model. The tests check that return and shipping questions are answered without calling the model.
+- **Grounded answers:** if nothing in the FAQ matches, the assistant gives a fallback reply instead of guessing.
+- **Streaming:** `GET /chat/stream` returns the answer as a stream for a typing effect.
+- **Local AI:** the chat model and the embeddings both run on your own machine through Ollama, so no API key or paid service is needed.
+- **No secrets in git:** the database password comes from `.env`, which is ignored by git.
+
 ## Tech stack
 
 - Java and Spring Boot (Maven)
-- PostgreSQL in Docker, with a `vector_store` table for FAQ embeddings
+- Spring AI with Ollama for the chat model and embeddings
+- PostgreSQL in Docker, with pgvector and a `vector_store` table for FAQ embeddings
 - Plain HTML, CSS and JavaScript for the chat page (light and dark mode)
 
 ## Prerequisites
@@ -88,6 +123,15 @@ docker exec smartshop-db psql -U smartshop -d smartshop -c "TRUNCATE vector_stor
 
 Then restart `assistant-service`.
 
+## Running tests
+
+```
+cd assistant-service
+mvn test
+```
+
+The tests check that the FAQ loads, covers the main topics and contains only demo contact details, and that the chat endpoint answers common questions and rejects blank messages. They run without Ollama or the database, and they also run automatically on every push through GitHub Actions.
+
 ## Configuration
 
 | Variable | Where | Description |
@@ -100,10 +144,12 @@ Real credentials stay in `.env` only. Committed files contain `${DB_PASSWORD}` p
 
 ```
 smartshop-assistant/
-├── assistant-service/    chat API, FAQ ingestion, chat page
+├── .github/workflows/    GitHub Actions workflow that runs the tests
+├── assistant-service/    chat API, FAQ ingestion, chat page, tests
 ├── customer-service/
 ├── inventory-service/
 ├── order-service/
+├── docs/                 README screenshot
 ├── docker-compose.yml
 ├── .env.example
 └── new-order.bat         sample order helper (Windows)
@@ -111,12 +157,4 @@ smartshop-assistant/
 
 ## Author
 
-Built by SandeshUK400 as a portfolio project.
-
-## Running tests
-
-```n cd assistant-service
- mvn test
-```
-
-The tests check that the FAQ loads, covers the main topics and contains only demo contact details, and that the chat endpoint answers common questions and rejects blank messages. They run without Ollama or the database.
+Built by Sandesh Narayan Ukey as a portfolio project.
