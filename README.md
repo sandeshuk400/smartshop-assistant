@@ -32,7 +32,7 @@ PostgreSQL runs in Docker, defined in `docker-compose.yml`.
 
 - Java JDK and Maven
 - Docker Desktop
-- An API key for the AI model provider used by `assistant-service` (see `assistant-service/src/main/resources/application.yml`)
+- [Ollama](https://ollama.com) installed and running locally, with the chat model named in `assistant-service/src/main/resources/application.yml` pulled (`ollama pull <model-name>`)
 
 ## Getting started
 
