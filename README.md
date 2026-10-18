@@ -157,4 +157,4 @@ smartshop-assistant/
 
 ## Author
 
-Built by Sandesh Narayan Ukey as a portfolio project.
+Built by Sandesh Ukey as a portfolio project.
