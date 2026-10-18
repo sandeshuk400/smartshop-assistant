@@ -32,7 +32,7 @@ PostgreSQL runs in Docker, defined in `docker-compose.yml`.
 
 - Java JDK and Maven
 - Docker Desktop
-- [Ollama](https://ollama.com) installed and running locally, with the chat model named in `assistant-service/src/main/resources/application.yml` pulled (`ollama pull <model-name>`)
+- [Ollama](https://ollama.com) installed and running locally, with two models pulled: `ollama pull llama3.2:3b` (chat) and `ollama pull nomic-embed-text` (FAQ embeddings)
 
 ## Getting started
 
