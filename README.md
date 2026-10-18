@@ -117,4 +117,4 @@ Built by SandeshUK400 as a portfolio project.
  mvn test
 ```
 
-The tests check that the FAQ loads, covers the main topics and contains only demo contact details. They run without Ollama or the database.
+The tests check that the FAQ loads, covers the main topics and contains only demo contact details, and that the chat endpoint answers common questions and rejects blank messages. They run without Ollama or the database.
