@@ -110,3 +110,11 @@ smartshop-assistant/
 ## Author
 
 Built by SandeshUK400 as a portfolio project.
+
+## Running tests
+
+```n cd assistant-service
+ mvn test
+```
+
+The tests check that the FAQ loads, covers the main topics and contains only demo contact details. They run without Ollama or the database.
