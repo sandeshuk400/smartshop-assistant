@@ -130,7 +130,7 @@ cd assistant-service
 mvn test
 ```
 
-The tests check that the FAQ loads, covers the main topics and contains only demo contact details, and that the chat endpoint answers common questions and rejects blank messages. They run without Ollama or the database, and they also run automatically on every push through GitHub Actions.
+The tests check that the FAQ loads, covers the main topics and contains only demo contact details, that the chat endpoint answers common questions and rejects blank messages, and that the order lookup asks for the order number, customer ID and bill code step by step, keeps sessions separate and locks out an address after repeated wrong guesses. They run without Ollama or the database, and they also run automatically on every push through GitHub Actions.
 
 ## Configuration
 
